@@ -1,0 +1,21 @@
+{
+  "defaults": {
+    "local": "qwen2.5-coder:7b",
+    "analysis": "qwen2.5-coder:14b",
+    "reasoning": "deepseek-r1:8b",
+    "premium": "codex"
+  },
+  "fallbacks": {
+    "quick": "qwen2.5-coder:7b",
+    "analysis": "qwen2.5-coder:14b",
+    "coding": "qwen2.5-coder:14b",
+    "reasoning": "deepseek-r1:8b",
+    "premium": "codex"
+  },
+  "optional": {
+    "deepseek-r1:8b": {
+      "installed": false,
+      "purpose": "reasoning local quando instalado"
+    }
+  }
+}

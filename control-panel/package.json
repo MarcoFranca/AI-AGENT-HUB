@@ -1,0 +1,35 @@
+{
+  "name": "ai-hub-control-panel",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Windows control panel for the local AI Agent Hub.",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win portable",
+    "check": "node --check src/main.js && node --check src/preload.js && node --check src/ipc/status.js && node --check src/ipc/actions.js && node --check src/renderer/app.js && node --check scripts/validate-ipc.js",
+    "validate:ipc": "node scripts/validate-ipc.js"
+  },
+  "build": {
+    "appId": "com.aiagenthub.controlpanel",
+    "productName": "AI Hub Control Panel",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "win": {
+      "signAndEditExecutable": false,
+      "target": [
+        "portable"
+      ],
+      "artifactName": "AI-Hub-Control-Panel-${version}.${ext}"
+    }
+  },
+  "devDependencies": {
+    "electron": "^30.5.1",
+    "electron-builder": "^26.8.1"
+  }
+}

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI Hub Control Panel</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">AI Agent Hub</p>
+          <h1>AI Hub Control Panel</h1>
+        </div>
+        <div class="overall">
+          <span id="overall-dot" class="dot"></span>
+          <strong id="overall-status">LOADING</strong>
+        </div>
+      </header>
+
+      <section class="actions" aria-label="Acoes do Hub">
+        <button data-action="start">Start Hub</button>
+        <button data-action="stop" class="danger">Stop Hub</button>
+        <button data-action="restart">Restart Hub</button>
+        <button data-action="refresh">Refresh Status</button>
+        <button id="refresh-models">Refresh Models</button>
+        <button id="open-webui">Open WebUI</button>
+        <button id="open-logs">Open Logs Folder</button>
+      </section>
+
+      <section class="grid">
+        <article class="panel status-panel">
+          <h2>Servicos</h2>
+          <div id="services" class="services"></div>
+        </article>
+
+        <article class="panel">
+          <h2>Contexto</h2>
+          <dl class="facts">
+            <div>
+              <dt>Projeto ativo</dt>
+              <dd id="active-project">-</dd>
+            </div>
+            <div>
+              <dt>Agente ativo</dt>
+              <dd id="active-agent">-</dd>
+            </div>
+            <div>
+              <dt>Uptime do painel</dt>
+              <dd id="app-uptime">-</dd>
+            </div>
+            <div>
+              <dt>Ultima leitura</dt>
+              <dd id="last-read">-</dd>
+            </div>
+          </dl>
+        </article>
+
+        <article class="panel models-panel">
+          <h2>Modelos Ollama</h2>
+          <div class="model-controls">
+            <label>
+              Local
+              <select id="local-model"></select>
+            </label>
+            <label>
+              Analise
+              <select id="analysis-model"></select>
+            </label>
+            <button id="install-deepseek" class="optional">Install DeepSeek R1 8B</button>
+          </div>
+          <ul id="models" class="models"></ul>
+        </article>
+
+        <article class="panel logs-panel">
+          <h2>Logs recentes</h2>
+          <pre id="logs">Carregando logs...</pre>
+        </article>
+      </section>
+
+      <p id="message" class="message" role="status"></p>
+    </main>
+    <script src="./app.js"></script>
+  </body>
+</html>

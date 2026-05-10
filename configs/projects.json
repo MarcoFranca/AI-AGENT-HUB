@@ -1,0 +1,10 @@
+{
+  "defaultProject": "wlg-capital-site",
+  "projects": {
+    "wlg-capital-site": {
+      "path": "E:\\Autentika\\Projetos\\Programas\\wlg-capital-site",
+      "description": "Site WLG Capital",
+      "enabled": true
+    }
+  }
+}

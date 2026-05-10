@@ -1,0 +1,49 @@
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.p12
+
+# Dependencies
+node_modules/
+bot/node_modules/
+control-panel/node_modules/
+
+# Runtime data
+logs/
+memory/
+downloads/
+*.log
+*.pid
+
+# Electron builds and caches
+control-panel/dist/
+control-panel/out/
+control-panel/.webpack/
+control-panel/.vite/
+
+# AI/local storage
+models/
+ollama/
+docker/
+wsl/
+open-webui/data/
+
+# Large generated artifacts
+*.vhdx
+*.gguf
+*.bin
+*.onnx
+*.safetensors
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# PM2 local state
+.pm2/

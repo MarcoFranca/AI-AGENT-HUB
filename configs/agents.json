@@ -1,0 +1,35 @@
+{
+  "defaultAgent": "manager",
+  "agents": {
+    "manager": {
+      "name": "manager",
+      "description": "Roteia tarefas, decide proximo passo e mantem continuidade operacional.",
+      "promptFile": "agents/manager.agent.md",
+      "enabled": true
+    },
+    "coder": {
+      "name": "coder",
+      "description": "Ajuda em programacao, analise de codigo e preparacao de tarefas para Codex.",
+      "promptFile": "agents/coder.agent.md",
+      "enabled": true
+    },
+    "automation": {
+      "name": "automation",
+      "description": "Ajuda com automacoes, scripts, APIs e workflows.",
+      "promptFile": "agents/automation.agent.md",
+      "enabled": true
+    },
+    "marketing": {
+      "name": "marketing",
+      "description": "Ajuda com campanhas, copy, funis e conteudo.",
+      "promptFile": "agents/marketing.agent.md",
+      "enabled": true
+    },
+    "sales": {
+      "name": "sales",
+      "description": "Ajuda com vendas, objeções, follow-up e CRM.",
+      "promptFile": "agents/sales.agent.md",
+      "enabled": true
+    }
+  }
+}

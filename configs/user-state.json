@@ -1,0 +1,25 @@
+{
+  "users": {
+    "offline-validation": {
+      "project": "wlg-capital-site",
+      "agent": "coder"
+    },
+    "validation": {
+      "project": "wlg-capital-site"
+    },
+    "validation-codex": {
+      "project": "wlg-capital-site"
+    },
+    "phase2-validation": {
+      "agent": "coder"
+    }
+  },
+  "channels": {
+    "offline-validation-channel": {
+      "agent": "coder"
+    },
+    "phase2-channel": {
+      "agent": "coder"
+    }
+  }
+}

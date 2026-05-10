@@ -1,0 +1,35 @@
+{
+  "allowedRoots": [
+    "E:\\Autentika\\Projetos\\Programas\\wlg-capital-site"
+  ],
+  "destructivePatterns": [
+    "rm ",
+    "del ",
+    "rmdir ",
+    "Remove-Item",
+    "git reset",
+    "git clean",
+    "format ",
+    "drop database",
+    "truncate table"
+  ],
+  "localModel": "qwen2.5-coder:7b",
+  "ollamaBaseUrl": "http://127.0.0.1:11434",
+  "ollamaModels": "E:\\AI\\ollama\\models",
+  "hermesHome": "E:\\AI\\agents\\hermes-home",
+  "hermesCommand": "wsl -d Ubuntu -- bash -lc \"HERMES_HOME=/mnt/e/AI/agents/hermes-home hermes\"",
+  "memoryDir": "E:\\AI\\memory",
+  "skillsDir": "E:\\AI\\skills",
+  "logsDir": "E:\\AI\\agents\\ai-agent-hub\\logs",
+  "codexCommand": "codex",
+  "requireConfirmationForDestructiveCommands": true,
+  "redactKeys": [
+    "token",
+    "secret",
+    "password",
+    "api_key",
+    "apikey",
+    "authorization",
+    "cookie"
+  ]
+}

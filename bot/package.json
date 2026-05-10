@@ -1,0 +1,13 @@
+{
+  "name": "ai-agent-hub-discord-bot",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "register": "node src/register-commands.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.16.3"
+  }
+}
