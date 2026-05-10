@@ -15,8 +15,21 @@ const els = {
   appUptime: document.getElementById("app-uptime"),
   lastRead: document.getElementById("last-read"),
   logs: document.getElementById("logs"),
+  chatProject: document.getElementById("chat-project"),
+  chatAgent: document.getElementById("chat-agent"),
+  chatMode: document.getElementById("chat-mode"),
+  chatModel: document.getElementById("chat-model"),
+  chatHistory: document.getElementById("chat-history"),
+  chatForm: document.getElementById("chat-form"),
+  chatPrompt: document.getElementById("chat-prompt"),
+  chatStatus: document.getElementById("chat-status"),
+  chatMemory: document.getElementById("chat-memory"),
+  chatSkills: document.getElementById("chat-skills"),
+  chatFiles: document.getElementById("chat-files"),
   message: document.getElementById("message")
 };
+
+let currentAssistantBubble = null;
 
 function setMessage(text) {
   els.message.textContent = text || "";
@@ -88,6 +101,104 @@ function renderModelSelect(select, models, activeModel) {
     ? models.map((model) => `<option value="${model}">${model}</option>`).join("")
     : "<option value=\"\">Nenhum modelo</option>";
   select.value = models.includes(activeModel) ? activeModel : currentValue;
+}
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function highlightCode(code) {
+  return escapeHtml(code)
+    .replace(/(".*?"|'.*?')/g, "<span class=\"str\">$1</span>")
+    .replace(/\b(const|let|var|function|return|if|else|for|while|import|export|from|async|await|try|catch|class|new|param|function)\b/g, "<span class=\"kw\">$1</span>")
+    .replace(/\b(\d+)\b/g, "<span class=\"num\">$1</span>");
+}
+
+function renderMarkdown(markdown) {
+  const codeBlocks = [];
+  let html = escapeHtml(markdown).replace(/```(\w+)?\n([\s\S]*?)```/g, (_match, lang, code) => {
+    const index = codeBlocks.length;
+    codeBlocks.push(`<pre><code data-lang="${escapeHtml(lang || "")}">${highlightCode(code)}</code></pre>`);
+    return `@@CODE_${index}@@`;
+  });
+
+  html = html
+    .replace(/^### (.*)$/gm, "<h3>$1</h3>")
+    .replace(/^## (.*)$/gm, "<h2>$1</h2>")
+    .replace(/^# (.*)$/gm, "<h1>$1</h1>")
+    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/^- (.*)$/gm, "<p>• $1</p>")
+    .replace(/\n{2,}/g, "</p><p>")
+    .replace(/\n/g, "<br>");
+
+  html = `<p>${html}</p>`;
+  codeBlocks.forEach((block, index) => {
+    html = html.replace(`@@CODE_${index}@@`, block);
+  });
+  return html;
+}
+
+function addChatMessage(role, text) {
+  const row = document.createElement("div");
+  row.className = `message-row ${role}`;
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  bubble.dataset.raw = text || "";
+  bubble.innerHTML = renderMarkdown(text || "");
+  row.appendChild(bubble);
+  els.chatHistory.appendChild(row);
+  els.chatHistory.scrollTop = els.chatHistory.scrollHeight;
+  return bubble;
+}
+
+function updateBubble(bubble, text) {
+  bubble.dataset.raw = text;
+  bubble.innerHTML = renderMarkdown(text);
+  els.chatHistory.scrollTop = els.chatHistory.scrollHeight;
+}
+
+function appendChatStatus(status, detail = "") {
+  const last = els.chatStatus.lastElementChild?.dataset.status;
+  if (last === status) {
+    return;
+  }
+  const li = document.createElement("li");
+  li.dataset.status = status;
+  li.textContent = detail ? `${status}: ${detail}` : status;
+  els.chatStatus.appendChild(li);
+}
+
+function fillSelect(select, options, value, getLabel = (item) => item.name) {
+  select.innerHTML = options.map((item) => {
+    const itemValue = item.name || item;
+    return `<option value="${escapeHtml(itemValue)}">${escapeHtml(getLabel(item))}</option>`;
+  }).join("");
+  if (value) {
+    select.value = value;
+  }
+}
+
+async function loadChatMeta() {
+  const [meta, history, status] = await Promise.all([
+    window.aiHub.getChatMeta(),
+    window.aiHub.getChatHistory(),
+    window.aiHub.getStatus()
+  ]);
+  const installedModels = status.models?.installed || status.services?.ollama?.models || [];
+  fillSelect(els.chatProject, meta.projects, meta.activeProject, (item) => item.description ? `${item.name} - ${item.description}` : item.name);
+  fillSelect(els.chatAgent, meta.agents, meta.activeAgent, (item) => item.name);
+  fillSelect(els.chatModel, installedModels, meta.models?.defaults?.local || installedModels[0], (item) => item);
+
+  els.chatHistory.innerHTML = "";
+  history.slice(-20).forEach((entry) => {
+    addChatMessage("user", entry.prompt);
+    addChatMessage("assistant", entry.response);
+  });
 }
 
 async function refreshStatus({ silent = false } = {}) {
@@ -165,6 +276,15 @@ document.getElementById("open-logs").addEventListener("click", async () => {
   }
 });
 
+document.querySelectorAll(".tab").forEach((tab) => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach((item) => item.classList.remove("active"));
+    document.querySelectorAll(".view").forEach((item) => item.classList.remove("active"));
+    tab.classList.add("active");
+    document.getElementById(`${tab.dataset.tab}-view`).classList.add("active");
+  });
+});
+
 document.getElementById("refresh-models").addEventListener("click", () => {
   refreshStatus();
 });
@@ -195,6 +315,71 @@ els.installDeepSeek.addEventListener("click", async () => {
   await refreshStatus({ silent: true });
 });
 
+els.chatModel.addEventListener("change", async () => {
+  const task = els.chatMode.value === "analyze-project" ? "analysis" : "local";
+  const result = await window.aiHub.setModel(task, els.chatModel.value);
+  setMessage(result.ok ? `Modelo ${task}: ${result.model}` : result.error);
+});
+
+els.chatForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const prompt = els.chatPrompt.value.trim();
+  if (!prompt || busy) {
+    return;
+  }
+
+  busy = true;
+  els.chatPrompt.value = "";
+  els.chatStatus.innerHTML = "";
+  els.chatMemory.textContent = "-";
+  els.chatSkills.textContent = "-";
+  els.chatFiles.textContent = "-";
+  addChatMessage("user", prompt);
+  currentAssistantBubble = addChatMessage("assistant", "");
+  setMessage("Executando chat...");
+
+  const result = await window.aiHub.sendChatMessage({
+    project: els.chatProject.value,
+    agent: els.chatAgent.value,
+    mode: els.chatMode.value,
+    model: els.chatModel.value,
+    prompt
+  });
+
+  busy = false;
+  setMessage(result.ok ? "Chat finalizado." : result.error);
+});
+
+window.aiHub.onChatStatus((data) => {
+  appendChatStatus(data.status, data.detail);
+});
+
+window.aiHub.onChatContext((data) => {
+  els.chatMemory.textContent = data.memory || "-";
+  els.chatSkills.textContent = data.skills || "-";
+  els.chatFiles.textContent = (data.files || []).join("\n") || "-";
+});
+
+window.aiHub.onChatChunk((chunk) => {
+  if (!currentAssistantBubble) {
+    currentAssistantBubble = addChatMessage("assistant", "");
+  }
+  updateBubble(currentAssistantBubble, `${currentAssistantBubble.dataset.raw || ""}${chunk}`);
+});
+
+window.aiHub.onChatDone(() => {
+  currentAssistantBubble = null;
+});
+
+window.aiHub.onChatError((data) => {
+  if (currentAssistantBubble) {
+    updateBubble(currentAssistantBubble, `Erro: ${data.message}`);
+  }
+  currentAssistantBubble = null;
+  busy = false;
+  setMessage(data.message);
+});
+
 setInterval(() => {
   els.appUptime.textContent = formatDuration(Date.now() - startedAt);
 }, 1000);
@@ -206,3 +391,4 @@ setInterval(() => {
 }, 6000);
 
 refreshStatus();
+loadChatMeta();

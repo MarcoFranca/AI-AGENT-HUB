@@ -110,6 +110,29 @@ h2 {
   border-radius: 8px;
 }
 
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.tab {
+  min-width: 110px;
+}
+
+.tab.active {
+  border-color: var(--accent);
+  background: #253244;
+}
+
+.view {
+  display: none;
+}
+
+.view.active {
+  display: block;
+}
+
 button {
   border: 1px solid #465568;
   border-radius: 6px;
@@ -258,6 +281,125 @@ pre {
   color: var(--muted);
 }
 
+.chat-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.chat-main,
+.chat-context {
+  min-height: 620px;
+}
+
+.chat-toolbar {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.chat-toolbar label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.chat-history {
+  height: 410px;
+  overflow: auto;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #0d1015;
+}
+
+.message-row {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.message-row.user {
+  justify-items: end;
+}
+
+.bubble {
+  width: min(760px, 100%);
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #151922;
+}
+
+.message-row.user .bubble {
+  background: #1c2b3f;
+}
+
+.bubble h1,
+.bubble h2,
+.bubble h3 {
+  margin: 10px 0 8px;
+}
+
+.bubble p {
+  margin: 8px 0;
+}
+
+.bubble pre {
+  max-height: none;
+  margin: 10px 0;
+  border: 1px solid #2b3747;
+}
+
+.kw {
+  color: #82c7ff;
+}
+
+.str {
+  color: #a7e3a0;
+}
+
+.num {
+  color: #ffcc80;
+}
+
+.chat-form {
+  display: grid;
+  grid-template-columns: 1fr 110px;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 88px;
+  border: 1px solid #465568;
+  border-radius: 6px;
+  background: var(--panel-2);
+  color: var(--text);
+  padding: 10px;
+  font: inherit;
+}
+
+.status-list {
+  margin: 0 0 16px;
+  padding-left: 20px;
+  color: var(--muted);
+}
+
+.chat-context h3 {
+  margin: 14px 0 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.chat-context pre {
+  max-height: 145px;
+}
+
 @media (max-width: 900px) {
   .topbar {
     align-items: flex-start;
@@ -269,7 +411,10 @@ pre {
   }
 
   .grid,
-  .services {
+  .services,
+  .chat-layout,
+  .chat-toolbar,
+  .chat-form {
     grid-template-columns: 1fr;
   }
 }

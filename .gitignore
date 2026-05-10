@@ -21,6 +21,7 @@ downloads/
 
 # Electron builds and caches
 control-panel/dist/
+control-panel/data/
 control-panel/out/
 control-panel/.webpack/
 control-panel/.vite/

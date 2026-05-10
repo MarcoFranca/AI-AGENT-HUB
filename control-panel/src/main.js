@@ -2,6 +2,7 @@ const path = require("node:path");
 const { app, BrowserWindow, ipcMain, shell } = require("electron");
 const { registerStatusIpc } = require("./ipc/status");
 const { registerActionsIpc } = require("./ipc/actions");
+const { registerChatIpc } = require("./ipc/chat");
 
 const HUB_ROOT = process.env.AI_HUB_ROOT || "E:\\AI\\agents\\ai-agent-hub";
 const CONTROL_PANEL_ROOT = path.resolve(__dirname, "..");
@@ -29,6 +30,7 @@ function createWindow() {
 app.whenReady().then(() => {
   registerStatusIpc(ipcMain, { hubRoot: HUB_ROOT });
   registerActionsIpc(ipcMain, shell, { hubRoot: HUB_ROOT });
+  registerChatIpc(ipcMain, { hubRoot: HUB_ROOT });
   createWindow();
 
   app.on("activate", () => {

@@ -19,64 +19,105 @@
         </div>
       </header>
 
-      <section class="actions" aria-label="Acoes do Hub">
-        <button data-action="start">Start Hub</button>
-        <button data-action="stop" class="danger">Stop Hub</button>
-        <button data-action="restart">Restart Hub</button>
-        <button data-action="refresh">Refresh Status</button>
-        <button id="refresh-models">Refresh Models</button>
-        <button id="open-webui">Open WebUI</button>
-        <button id="open-logs">Open Logs Folder</button>
+      <nav class="tabs" aria-label="Navegacao principal">
+        <button class="tab active" data-tab="dashboard">Dashboard</button>
+        <button class="tab" data-tab="chat">Chat</button>
+      </nav>
+
+      <section id="dashboard-view" class="view active">
+        <section class="actions" aria-label="Acoes do Hub">
+          <button data-action="start">Start Hub</button>
+          <button data-action="stop" class="danger">Stop Hub</button>
+          <button data-action="restart">Restart Hub</button>
+          <button data-action="refresh">Refresh Status</button>
+          <button id="refresh-models">Refresh Models</button>
+          <button id="open-webui">Open WebUI</button>
+          <button id="open-logs">Open Logs Folder</button>
+        </section>
+
+        <section class="grid">
+          <article class="panel status-panel">
+            <h2>Servicos</h2>
+            <div id="services" class="services"></div>
+          </article>
+
+          <article class="panel">
+            <h2>Contexto</h2>
+            <dl class="facts">
+              <div>
+                <dt>Projeto ativo</dt>
+                <dd id="active-project">-</dd>
+              </div>
+              <div>
+                <dt>Agente ativo</dt>
+                <dd id="active-agent">-</dd>
+              </div>
+              <div>
+                <dt>Uptime do painel</dt>
+                <dd id="app-uptime">-</dd>
+              </div>
+              <div>
+                <dt>Ultima leitura</dt>
+                <dd id="last-read">-</dd>
+              </div>
+            </dl>
+          </article>
+
+          <article class="panel models-panel">
+            <h2>Modelos Ollama</h2>
+            <div class="model-controls">
+              <label>
+                Local
+                <select id="local-model"></select>
+              </label>
+              <label>
+                Analise
+                <select id="analysis-model"></select>
+              </label>
+              <button id="install-deepseek" class="optional">Install DeepSeek R1 8B</button>
+            </div>
+            <ul id="models" class="models"></ul>
+          </article>
+
+          <article class="panel logs-panel">
+            <h2>Logs recentes</h2>
+            <pre id="logs">Carregando logs...</pre>
+          </article>
+        </section>
       </section>
 
-      <section class="grid">
-        <article class="panel status-panel">
-          <h2>Servicos</h2>
-          <div id="services" class="services"></div>
-        </article>
+      <section id="chat-view" class="view">
+        <section class="chat-layout">
+          <article class="panel chat-main">
+            <div class="chat-toolbar">
+              <label>Projeto<select id="chat-project"></select></label>
+              <label>Agente<select id="chat-agent"></select></label>
+              <label>Modo<select id="chat-mode">
+                <option value="local">Local</option>
+                <option value="analyze-project">Analyze Project</option>
+                <option value="codex">Codex</option>
+              </select></label>
+              <label>Modelo<select id="chat-model"></select></label>
+            </div>
+            <div id="chat-history" class="chat-history"></div>
+            <form id="chat-form" class="chat-form">
+              <textarea id="chat-prompt" rows="4" placeholder="Converse com o agente ativo..."></textarea>
+              <button type="submit">Enviar</button>
+            </form>
+          </article>
 
-        <article class="panel">
-          <h2>Contexto</h2>
-          <dl class="facts">
-            <div>
-              <dt>Projeto ativo</dt>
-              <dd id="active-project">-</dd>
-            </div>
-            <div>
-              <dt>Agente ativo</dt>
-              <dd id="active-agent">-</dd>
-            </div>
-            <div>
-              <dt>Uptime do painel</dt>
-              <dd id="app-uptime">-</dd>
-            </div>
-            <div>
-              <dt>Ultima leitura</dt>
-              <dd id="last-read">-</dd>
-            </div>
-          </dl>
-        </article>
-
-        <article class="panel models-panel">
-          <h2>Modelos Ollama</h2>
-          <div class="model-controls">
-            <label>
-              Local
-              <select id="local-model"></select>
-            </label>
-            <label>
-              Analise
-              <select id="analysis-model"></select>
-            </label>
-            <button id="install-deepseek" class="optional">Install DeepSeek R1 8B</button>
-          </div>
-          <ul id="models" class="models"></ul>
-        </article>
-
-        <article class="panel logs-panel">
-          <h2>Logs recentes</h2>
-          <pre id="logs">Carregando logs...</pre>
-        </article>
+          <aside class="panel chat-context">
+            <h2>Status</h2>
+            <ol id="chat-status" class="status-list"></ol>
+            <h2>Contexto carregado</h2>
+            <h3>Memoria</h3>
+            <pre id="chat-memory">-</pre>
+            <h3>Skills</h3>
+            <pre id="chat-skills">-</pre>
+            <h3>Arquivos</h3>
+            <pre id="chat-files">-</pre>
+          </aside>
+        </section>
       </section>
 
       <p id="message" class="message" role="status"></p>

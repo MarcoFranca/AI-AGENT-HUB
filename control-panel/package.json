@@ -7,8 +7,9 @@
   "scripts": {
     "start": "electron .",
     "build": "electron-builder --win portable",
-    "check": "node --check src/main.js && node --check src/preload.js && node --check src/ipc/status.js && node --check src/ipc/actions.js && node --check src/renderer/app.js && node --check scripts/validate-ipc.js",
-    "validate:ipc": "node scripts/validate-ipc.js"
+    "check": "node --check src/main.js && node --check src/preload.js && node --check src/ipc/status.js && node --check src/ipc/actions.js && node --check src/ipc/chat.js && node --check src/renderer/app.js && node --check scripts/validate-ipc.js && node --check scripts/validate-chat.js",
+    "validate:ipc": "node scripts/validate-ipc.js",
+    "validate:chat": "node scripts/validate-chat.js"
   },
   "build": {
     "appId": "com.aiagenthub.controlpanel",

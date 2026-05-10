@@ -12,5 +12,33 @@ contextBridge.exposeInMainWorld("aiHub", {
   },
   openWebUi: () => ipcRenderer.invoke("hub:open-webui"),
   openLogsFolder: () => ipcRenderer.invoke("hub:open-logs"),
-  setModel: (task, model) => ipcRenderer.invoke("hub:set-model", { task, model })
+  setModel: (task, model) => ipcRenderer.invoke("hub:set-model", { task, model }),
+  getChatMeta: () => ipcRenderer.invoke("chat:meta"),
+  getChatHistory: () => ipcRenderer.invoke("chat:history"),
+  sendChatMessage: (payload) => ipcRenderer.invoke("chat:send", payload),
+  onChatStatus: (callback) => {
+    const handler = (_event, data) => callback(data);
+    ipcRenderer.on("chat:status", handler);
+    return () => ipcRenderer.removeListener("chat:status", handler);
+  },
+  onChatContext: (callback) => {
+    const handler = (_event, data) => callback(data);
+    ipcRenderer.on("chat:context", handler);
+    return () => ipcRenderer.removeListener("chat:context", handler);
+  },
+  onChatChunk: (callback) => {
+    const handler = (_event, chunk) => callback(chunk);
+    ipcRenderer.on("chat:chunk", handler);
+    return () => ipcRenderer.removeListener("chat:chunk", handler);
+  },
+  onChatDone: (callback) => {
+    const handler = (_event, data) => callback(data);
+    ipcRenderer.on("chat:done", handler);
+    return () => ipcRenderer.removeListener("chat:done", handler);
+  },
+  onChatError: (callback) => {
+    const handler = (_event, data) => callback(data);
+    ipcRenderer.on("chat:error", handler);
+    return () => ipcRenderer.removeListener("chat:error", handler);
+  }
 });
