@@ -93,11 +93,18 @@
               <label>Projeto<select id="chat-project"></select></label>
               <label>Agente<select id="chat-agent"></select></label>
               <label>Modo<select id="chat-mode">
-                <option value="local">Local</option>
-                <option value="analyze-project">Analyze Project</option>
+                <option value="local">Local rapido</option>
+                <option value="deep">Analise profunda</option>
+                <option value="marketing">Criativo/Marketing</option>
+                <option value="automation">Automacao</option>
                 <option value="codex">Codex</option>
               </select></label>
               <label>Modelo<select id="chat-model"></select></label>
+            </div>
+            <div class="chat-actions">
+              <button id="chat-clear" type="button">Limpar conversa</button>
+              <button id="chat-save-learning" type="button">Salvar aprendizado</button>
+              <button id="chat-create-skill" type="button">Transformar em skill</button>
             </div>
             <div id="chat-history" class="chat-history"></div>
             <form id="chat-form" class="chat-form">

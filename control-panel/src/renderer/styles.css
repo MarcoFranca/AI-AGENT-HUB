@@ -307,8 +307,15 @@ pre {
   font-size: 13px;
 }
 
+.chat-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
 .chat-history {
-  height: 410px;
+  height: 370px;
   overflow: auto;
   padding: 10px;
   border: 1px solid var(--line);

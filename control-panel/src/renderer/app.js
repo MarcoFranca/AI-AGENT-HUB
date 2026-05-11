@@ -26,10 +26,14 @@ const els = {
   chatMemory: document.getElementById("chat-memory"),
   chatSkills: document.getElementById("chat-skills"),
   chatFiles: document.getElementById("chat-files"),
+  chatClear: document.getElementById("chat-clear"),
+  chatSaveLearning: document.getElementById("chat-save-learning"),
+  chatCreateSkill: document.getElementById("chat-create-skill"),
   message: document.getElementById("message")
 };
 
 let currentAssistantBubble = null;
+let lastAssistantResponse = "";
 
 function setMessage(text) {
   els.message.textContent = text || "";
@@ -163,13 +167,26 @@ function updateBubble(bubble, text) {
 }
 
 function appendChatStatus(status, detail = "") {
+  const labels = {
+    carregando_agente: "carregando agente",
+    carregando_contexto: "carregando contexto",
+    carregando_memoria: "carregando memoria",
+    carregando_skills: "carregando skills",
+    chamando_ollama: "chamando modelo",
+    chamando_codex: "chamando Codex",
+    salvando_memoria: "salvando memoria",
+    sugerindo_skill: "sugerindo skill",
+    streaming_resposta: "exibindo resposta",
+    finalizado: "finalizado"
+  };
   const last = els.chatStatus.lastElementChild?.dataset.status;
   if (last === status) {
     return;
   }
   const li = document.createElement("li");
   li.dataset.status = status;
-  li.textContent = detail ? `${status}: ${detail}` : status;
+  const label = labels[status] || status.replace(/_/g, " ");
+  li.textContent = detail ? `${label}: ${detail}` : label;
   els.chatStatus.appendChild(li);
 }
 
@@ -193,12 +210,32 @@ async function loadChatMeta() {
   fillSelect(els.chatProject, meta.projects, meta.activeProject, (item) => item.description ? `${item.name} - ${item.description}` : item.name);
   fillSelect(els.chatAgent, meta.agents, meta.activeAgent, (item) => item.name);
   fillSelect(els.chatModel, installedModels, meta.models?.defaults?.local || installedModels[0], (item) => item);
+  syncChatModeDefaults();
 
   els.chatHistory.innerHTML = "";
   history.slice(-20).forEach((entry) => {
     addChatMessage("user", entry.prompt);
     addChatMessage("assistant", entry.response);
+    lastAssistantResponse = entry.response || lastAssistantResponse;
   });
+}
+
+function syncChatModeDefaults() {
+  const mode = els.chatMode.value;
+  if (mode === "marketing") {
+    els.chatAgent.value = "marketing";
+  } else if (mode === "automation") {
+    els.chatAgent.value = "automation";
+  } else if (mode === "codex" || mode === "deep") {
+    els.chatAgent.value = "coder";
+  }
+
+  const desiredModel = mode === "deep" || mode === "marketing" || mode === "automation"
+    ? els.analysisModel.value
+    : els.localModel.value;
+  if ([...els.chatModel.options].some((option) => option.value === desiredModel)) {
+    els.chatModel.value = desiredModel;
+  }
 }
 
 async function refreshStatus({ silent = false } = {}) {
@@ -316,9 +353,42 @@ els.installDeepSeek.addEventListener("click", async () => {
 });
 
 els.chatModel.addEventListener("change", async () => {
-  const task = els.chatMode.value === "analyze-project" ? "analysis" : "local";
+  const task = els.chatMode.value === "deep" || els.chatMode.value === "marketing" || els.chatMode.value === "automation" ? "analysis" : "local";
   const result = await window.aiHub.setModel(task, els.chatModel.value);
   setMessage(result.ok ? `Modelo ${task}: ${result.model}` : result.error);
+});
+
+els.chatMode.addEventListener("change", syncChatModeDefaults);
+
+els.chatClear.addEventListener("click", async () => {
+  const ok = window.confirm("Limpar apenas o historico local do painel?");
+  if (!ok) return;
+  const result = await window.aiHub.clearChatHistory();
+  if (result.ok) {
+    els.chatHistory.innerHTML = "";
+    lastAssistantResponse = "";
+    setMessage("Historico local limpo.");
+  } else {
+    setMessage(result.error || "Nao foi possivel limpar.");
+  }
+});
+
+els.chatSaveLearning.addEventListener("click", async () => {
+  const text = window.prompt("Qual aprendizado deseja salvar na memoria?", lastAssistantResponse.slice(0, 1000));
+  if (!text) return;
+  const result = await window.aiHub.saveChatLearning(text);
+  setMessage(result.ok ? "Aprendizado salvo na memoria." : result.error);
+});
+
+els.chatCreateSkill.addEventListener("click", async () => {
+  if (!lastAssistantResponse) {
+    setMessage("Nao ha resposta para transformar em skill.");
+    return;
+  }
+  const ok = window.confirm("Criar uma skill reutilizavel a partir da ultima resposta?");
+  if (!ok) return;
+  const result = await window.aiHub.createSkillFromChat(lastAssistantResponse);
+  setMessage(result.ok ? "Skill criada ou sugerida a partir da resposta." : result.error);
 });
 
 els.chatForm.addEventListener("submit", async (event) => {
@@ -368,6 +438,9 @@ window.aiHub.onChatChunk((chunk) => {
 });
 
 window.aiHub.onChatDone(() => {
+  if (currentAssistantBubble) {
+    lastAssistantResponse = currentAssistantBubble.dataset.raw || "";
+  }
   currentAssistantBubble = null;
 });
 

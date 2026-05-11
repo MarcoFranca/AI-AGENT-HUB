@@ -9,6 +9,8 @@ async function main() {
     hubRoot: "E:/AI/agents/ai-agent-hub",
     payload: {
       project: "wlg-capital-site",
+      userId: "control-panel-validation",
+      channelId: "control-panel-validation",
       agent: "coder",
       mode: "local",
       prompt: "Responda apenas OK para validar o chat nativo."

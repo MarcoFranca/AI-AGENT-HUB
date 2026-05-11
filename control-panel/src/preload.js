@@ -16,6 +16,9 @@ contextBridge.exposeInMainWorld("aiHub", {
   getChatMeta: () => ipcRenderer.invoke("chat:meta"),
   getChatHistory: () => ipcRenderer.invoke("chat:history"),
   sendChatMessage: (payload) => ipcRenderer.invoke("chat:send", payload),
+  clearChatHistory: () => ipcRenderer.invoke("chat:clear"),
+  saveChatLearning: (text) => ipcRenderer.invoke("chat:save-learning", { text }),
+  createSkillFromChat: (prompt) => ipcRenderer.invoke("chat:create-skill", { prompt }),
   onChatStatus: (callback) => {
     const handler = (_event, data) => callback(data);
     ipcRenderer.on("chat:status", handler);
